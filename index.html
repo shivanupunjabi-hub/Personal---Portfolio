@@ -2719,6 +2719,65 @@
         gap: 24px;
       }
     }
+
+    /* ===== MOBILE RESPONSIVE FIXES ===== */
+    @media (max-width: 768px) {
+
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      section {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      img,
+      video {
+        max-width: 100%;
+      }
+
+      /* Mobile only: keep Trusted Brands perfectly centered */
+      .brands-outer {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .brands-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        align-items: center;
+        text-align: center;
+      }
+
+      .brands-header {
+        width: 100%;
+        align-items: center;
+        text-align: center;
+      }
+
+      .brands-logos {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        justify-content: center;
+      }
+
+      .brand-item {
+        width: 100%;
+        min-width: 0;
+      }
+
+    }
   </style>
 </head>
 
@@ -3962,16 +4021,32 @@
 
         let dw, dh, dx, dy;
 
-        if (canvasRatio > imgRatio) {
-          dw = cw;
-          dh = Math.round(cw / imgRatio);
-          dx = 0;
-          dy = Math.round((ch - dh) * 0.4); // Centered with slight upward bias
-        } else {
-          dw = Math.round(ch * imgRatio);
-          dh = ch;
+        // MOBILE
+        if (window.innerWidth <= 768) {
+          // Cover the complete mobile viewport while keeping image ratio
+          const scale = Math.max(cw / iw, ch / ih);
+
+          dw = Math.round(iw * scale);
+          dh = Math.round(ih * scale);
+
+          // Keep subject toward right, like target mobile design
           dx = Math.round((cw - dw) / 2);
-          dy = 0;
+          dy = Math.round((ch - dh) / 2);
+        }
+
+        // DESKTOP — keep original behaviour
+        else {
+          if (canvasRatio > imgRatio) {
+            dw = cw;
+            dh = Math.round(cw / imgRatio);
+            dx = 0;
+            dy = Math.round((ch - dh) * 0.4);
+          } else {
+            dw = Math.round(ch * imgRatio);
+            dh = ch;
+            dx = Math.round((cw - dw) / 2);
+            dy = 0;
+          }
         }
 
         ctx.drawImage(img, dx, dy, dw, dh);
